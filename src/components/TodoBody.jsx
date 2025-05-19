@@ -5,37 +5,14 @@ import Grid from "@mui/material/Grid";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useContext } from "react";
 import { TabsContext } from "../contexts/TabsContext";
-const toDoObject = [
-  {
-    title: "المهمة الأولى",
-    description: "",
-    creationTime: new Date().toLocaleString(),
-    endingTime: "",
-    type: "شخصي",
-    status: false,
-  },
-  {
-    title: "المهمة الثانية",
-    description: "",
-    creationTime: new Date().toLocaleString(),
-    endingTime: "",
-    type: "عمل",
-    status: true,
-  },
-  {
-    title: "المهمة الثالثة",
-    description: "",
-    creationTime: new Date().toLocaleString(),
-    endingTime: "",
-    type: "هوايات",
-    status: true,
-  },
-];
+// REACT
+import { useContext } from "react";
 
-function TodoBody() {
-  const toDoElements = toDoObject.map((todo) => (
+function TodoBody({ toDoObject }) {
+  if (Object.keys(toDoObject).length === 0)
+    return <h1 className="text-black my-10">لا يوجد مهام بعد</h1>;
+  const toDoElements = toDoObject?.map((todo) => (
     <Todo key={todo.creationTime} todo={todo} />
   ));
   return <Box component="section">{toDoElements}</Box>;
@@ -43,12 +20,9 @@ function TodoBody() {
 
 function Todo({ todo }) {
   const colors = useContext(TabsContext);
-  const [blue, green, yellow, purple, darkBlue, lightGreen] = colors.filter(
-    (color) => color
-  );
+  const [blue, green, yellow, ...other] = colors.filter((color) => color);
 
   const iconsStyle = {
-    color: "white",
     padding: ".4rem",
     borderRadius: "50%",
     fontSize: "2rem",
@@ -69,7 +43,7 @@ function Todo({ todo }) {
         sx={{
           width: "5px",
           height: "100px",
-          background: `${todo.status ? green.color : yellow.color}`,
+          background: `${todo.isComplated ? green.color : yellow.color}`,
           borderRadius: "1rem",
         }}
       ></Box>
@@ -78,7 +52,7 @@ function Todo({ todo }) {
         sx={{
           width: "100%",
           height: "100px",
-          background: "#EEE",
+          background: `${other.filter((o) => o.title == todo.type)[0]?.accent}`,
           borderRadius: ".3rem",
           flexGrow: 1,
           display: "flex",
@@ -89,16 +63,26 @@ function Todo({ todo }) {
       >
         {/* To do Title */}
         <Grid size={8}>
-          <Typography variant="h6" sx={{ textAlign: "right" }}>
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "right", alignSelf: "self-start" }}
+          >
             {todo.title}
+          </Typography>
+          <Typography
+            variant="p"
+            sx={{ textAlign: "right", display: "block", alignSelf: "start" }}
+          >
+            {todo.description}
           </Typography>
         </Grid>
         {/* Action */}
         <Grid size={4} sx={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Tooltip title="Done">
+          <Tooltip title="تم">
             <DoneIcon
               sx={{
-                background: `${green.color}`,
+                border: `2px solid${green.color}`,
+                color: `${green.color}`,
                 ...iconsStyle,
               }}
             />
@@ -106,15 +90,18 @@ function Todo({ todo }) {
           <Tooltip title="تعديل">
             <EditIcon
               sx={{
-                background: `${yellow.color}`,
+                border: `2px solid ${yellow.color}`,
+                color: `${yellow.color}`,
                 ...iconsStyle,
               }}
             />
           </Tooltip>
           <Tooltip title="حذف">
             <DeleteIcon
+              color="dangar"
               sx={{
-                background: "red",
+                border: "2px solid red",
+                color: "red",
                 ...iconsStyle,
               }}
             />

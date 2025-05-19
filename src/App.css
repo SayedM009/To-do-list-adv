@@ -41,3 +41,34 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Downloaded fonts */
+@font-face {
+  font-family: Cairo;
+  src: url("/public/fonts/Cairo-Light.ttf");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url("/public/fonts/Cairo-Regular.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url("/public/fonts/Cairo-Medium.ttf");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url("/public/fonts/Cairo-SemiBold.ttf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: Cairo;
+  src: url("/public/fonts/Cairo-Bold.ttf");
+  font-weight: 700;
+}
