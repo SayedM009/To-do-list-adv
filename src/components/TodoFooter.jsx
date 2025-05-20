@@ -13,7 +13,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { TodosContext } from "../contexts/TodosContext";
-
 const style = {
   position: "absolute",
   top: "50%",
