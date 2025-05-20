@@ -10,8 +10,9 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { TodosContext } from "../contexts/TodosContext";
 
 const style = {
   position: "absolute",
@@ -26,7 +27,8 @@ const style = {
   color: "black",
 };
 
-function TodoFooter({ onAddToDo }) {
+function TodoFooter() {
+  const { handleAddingTodo } = useContext(TodosContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -43,10 +45,11 @@ function TodoFooter({ onAddToDo }) {
       creationTime: new Date().toLocaleString(),
       endingTime: "",
       isComplated: false,
+      all: "الكل",
     };
 
     // Passing Todo Object
-    onAddToDo(todo);
+    handleAddingTodo(todo);
 
     // Closing the modal
     handleClose();
@@ -86,7 +89,33 @@ function TodoFooter({ onAddToDo }) {
               variant="outlined"
               fullWidth
               dir="rtl"
-              sx={{ marginTop: "1rem", marginBottom: "1rem" }}
+              sx={{
+                marginTop: "1rem",
+                marginBottom: "1rem",
+                "& .MuiInputLabel-root": {
+                  right: 30,
+                  left: "auto",
+                  textAlign: "right",
+                  transformOrigin: "top right",
+                  backgroundColor: "white",
+                  padding: "0 4px",
+                  zIndex: 1, // important so it appears above the border
+                },
+                "& .MuiInputLabel-shrink": {
+                  backgroundColor: "white",
+                  padding: "0 4px",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  legend: {
+                    width: 0, // hides the original legend that causes the white cut
+                  },
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& input": {
+                    textAlign: "right",
+                  },
+                },
+              }}
               onChange={(e) =>
                 setToDoInfo({ ...toDoInfo, title: e.target.value })
               }
@@ -97,7 +126,33 @@ function TodoFooter({ onAddToDo }) {
               variant="outlined"
               fullWidth
               dir="rtl"
-              sx={{ marginTop: "1rem", marginBottom: "1rem" }}
+              sx={{
+                marginTop: "1rem",
+                marginBottom: "1rem",
+                "& .MuiInputLabel-root": {
+                  right: 30,
+                  left: "auto",
+                  textAlign: "right",
+                  transformOrigin: "top right",
+                  backgroundColor: "white",
+                  padding: "0 4px",
+                  zIndex: 1, // important so it appears above the border
+                },
+                "& .MuiInputLabel-shrink": {
+                  backgroundColor: "white",
+                  padding: "0 4px",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  legend: {
+                    width: 0, // hides the original legend that causes the white cut
+                  },
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& input": {
+                    textAlign: "right",
+                  },
+                },
+              }}
               onChange={(e) =>
                 setToDoInfo({ ...toDoInfo, description: e.target.value })
               }
@@ -117,9 +172,9 @@ function TodoFooter({ onAddToDo }) {
               }
             >
               <FormControlLabel
-                value="شخصي"
+                value="شخصى"
                 control={<Radio sx={{ paddingRight: "0" }} />}
-                label="شخصي"
+                label="شخصى"
                 sx={{ margin: "0" }}
               />
               <FormControlLabel
