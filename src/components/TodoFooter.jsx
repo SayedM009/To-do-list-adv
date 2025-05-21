@@ -1,18 +1,20 @@
 // MUI
+import { TextField } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { TextField } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-
+// REACT
 import { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+// CONTEXT
 import { TodosContext } from "../contexts/TodosContext";
+// Modal Style
 const style = {
   position: "absolute",
   top: "50%",
@@ -27,43 +29,39 @@ const style = {
 };
 
 function TodoFooter() {
-  const { handleAddingTodo } = useContext(TodosContext);
+  const { todos, handleAddingTodo } = useContext(TodosContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [toDoInfo, setToDoInfo] = useState({
+  const [toDoDetails, setToDoDetails] = useState({
     title: "",
     description: "",
     type: "",
   });
 
-  function handleOnClick() {
+  // FUNCTIONS
+  function handleOnClickAddingNewToDo() {
     const todo = {
-      id: uuidv4(),
-      ...toDoInfo,
+      id: uuidv4(), // GENERATE A RANDOM ID
+      ...toDoDetails,
       creationTime: new Date().toLocaleString(),
       endingTime: "",
       isComplated: false,
       all: "الكل",
     };
 
-    // Passing Todo Object
+    // PASSING A NEW TODO OBJECT TO FUNCTIN TO ADDING IT TO TODOS
     handleAddingTodo(todo);
 
     // Closing the modal
     handleClose();
+
+    // ADDING TODOS TO LOCAL STORAGE
+    localStorage.setItem("todos", JSON.stringify([...todos, todo]));
   }
 
   return (
     <div>
-      <Button
-        onClick={handleOpen}
-        sx={{ width: "100%" }}
-        variant="contained"
-        size="large"
-      >
-        أضف من هنا
-      </Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -116,7 +114,7 @@ function TodoFooter() {
                 },
               }}
               onChange={(e) =>
-                setToDoInfo({ ...toDoInfo, title: e.target.value })
+                setToDoDetails({ ...toDoDetails, title: e.target.value })
               }
             />
             <TextField
@@ -153,7 +151,7 @@ function TodoFooter() {
                 },
               }}
               onChange={(e) =>
-                setToDoInfo({ ...toDoInfo, description: e.target.value })
+                setToDoDetails({ ...toDoDetails, description: e.target.value })
               }
             />
 
@@ -167,7 +165,7 @@ function TodoFooter() {
                 marginBottom: "1rem",
               }}
               onChange={(e) =>
-                setToDoInfo({ ...toDoInfo, type: e.target.value })
+                setToDoDetails({ ...toDoDetails, type: e.target.value })
               }
             >
               <FormControlLabel
@@ -191,7 +189,7 @@ function TodoFooter() {
             </RadioGroup>
 
             <Button
-              onClick={handleOnClick}
+              onClick={handleOnClickAddingNewToDo}
               sx={{ width: "100%" }}
               variant="contained"
               size="large"
@@ -201,6 +199,14 @@ function TodoFooter() {
           </Box>
         </Fade>
       </Modal>
+      <Button
+        onClick={handleOpen}
+        sx={{ width: "100%" }}
+        variant="contained"
+        size="large"
+      >
+        أضف من هنا
+      </Button>
     </div>
   );
 }

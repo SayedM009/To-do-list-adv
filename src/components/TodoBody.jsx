@@ -23,6 +23,7 @@ import { TextField } from "@mui/material";
 import { useContext, useState } from "react";
 import { TodosContext } from "../contexts/TodosContext";
 import { TabsContext } from "../contexts/TabsContext";
+import { useSearchParams } from "react-router";
 
 // Modal Style
 const style = {
@@ -48,32 +49,52 @@ const iconsStyle = {
 
 function TodoBody() {
   const { todos } = useContext(TodosContext);
+  const [searchParams] = useSearchParams();
 
-  // If there are not to dos
-  if (Object.keys(todos).length === 0)
+  // FILTER TODOS BASED ON CLICK TABS
+  const isCompletedParamRaw = searchParams.get("isComplated");
+  const typeParamRaw = searchParams.get("type");
+  const isCompletedParam =
+    isCompletedParamRaw === "null" ? null : isCompletedParamRaw;
+  const typeParam = typeParamRaw === "null" ? null : typeParamRaw;
+
+  const filteredTasks = todos.filter((todo) => {
+    const matchesCompletion =
+      isCompletedParam === null ||
+      (isCompletedParam === "true" && todo.isComplated) ||
+      (isCompletedParam === "false" && !todo.isComplated);
+
+    const matchesType = typeParam === null || todo.type === typeParam;
+
+    return matchesCompletion && matchesType;
+  });
+
+  // IF THERE ARE NO TODOS
+  if (Object.keys(filteredTasks).length === 0)
     return (
       <h2 className=" my-10 text-blue-950 font-medium">
         أضف بعض المهمام لرويتها هنا.
       </h2>
     );
 
-  // Render to dos
-  const toDoElements = todos?.map((todo) => {
+  // RENDER FILTERED TODOS
+  const toDoElements = filteredTasks?.map((todo) => {
     return <Todo key={todo.id} todo={todo} />;
   });
   return <Box component="section">{toDoElements}</Box>;
 }
 
 function Todo({ todo }) {
+  const [deleteTodo, setDeleteTodo] = useState(false);
+  const [updateTodo, setUpdateTodo] = useState(false);
+  const { todos, setTodos } = useContext(TodosContext);
   const [toDoInfo, setToDoInfo] = useState({
     title: "",
     description: "",
     type: "",
   });
-  const [deleteTodo, setDeleteTodo] = useState(false);
-  const [updateTodo, setUpdateTodo] = useState(false);
-  const { todos, setTodos } = useContext(TodosContext);
-  // Grap the colors of tabs from their context (TabsContext)
+
+  // BRING & COMPAIN BASIC AND TYPED OBJECT FROM TABS CONTEXT TO EXTRACT COLORS
   const { basicTabsObjects, typedTabsObjects } = useContext(TabsContext);
   const [_, green, yellow, ...other] = [
     ...basicTabsObjects,
@@ -86,11 +107,15 @@ function Todo({ todo }) {
       obj.id === todo.id ? { ...obj, isComplated: !obj.isComplated } : obj
     );
     setTodos(newTodosObjects);
+    // Update to dos in local storage
+    localStorage.setItem("todos", JSON.stringify(newTodosObjects));
   }
 
   function handleOnClickDelete() {
     const newTodosObjects = todos.filter((t) => t.id !== todo.id);
     setTodos(newTodosObjects);
+    // Update to dos in local storage
+    localStorage.setItem("todos", JSON.stringify(newTodosObjects));
   }
 
   function handleOnClickUpdateTodo() {
@@ -105,10 +130,13 @@ function Todo({ todo }) {
         : obj
     );
     setTodos(newTodosObjects);
+    // Update to dos in local storage
+    localStorage.setItem("todos", JSON.stringify(newTodosObjects));
     setToDoInfo({ title: "", description: "", type: "" });
     setUpdateTodo(false);
   }
 
+  // RENDER THE ADDING TODO DATE AS STRING
   const date = new Intl.DateTimeFormat("ar-EG", {
     weekday: "long",
     year: "numeric",
@@ -118,7 +146,7 @@ function Todo({ todo }) {
 
   return (
     <>
-      {/* Update to do */}
+      {/* UPDATE TODO MODAL */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -259,8 +287,8 @@ function Todo({ todo }) {
           </Box>
         </Fade>
       </Modal>
-      {/* Update to do */}
-      {/* Delete to do */}
+      {/* UPDATE TODO MODAL */}
+      {/* DELET TODO MODAL FOR APPROVAL*/}
       <Dialog
         open={deleteTodo}
         keepMounted
@@ -284,7 +312,7 @@ function Todo({ todo }) {
           </Button>
         </DialogActions>
       </Dialog>
-      {/* Delete to do */}
+      {/* DELET TODO MODAL FOR APPROVAL*/}
       <Box
         sx={{
           color: "black",

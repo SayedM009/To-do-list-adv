@@ -1,50 +1,52 @@
+// GENERAL CSS RULES YOU WILL FIND IT DOWN BELOW
+// 1. If the tab is first element isFirstElement={tabsObject.indexOf(tab) == 0}
+// 2. If the tab is last element isLastElement={tabsObject.indexOf(tab) == basicTabsObjects.length - 1}
+
 // MUI
 import Typography from "@mui/material/Typography";
+// REACT
 import { useContext, useState } from "react";
-import { TabsContext } from "../contexts/TabsContext";
 import { useSearchParams } from "react-router";
-
-// CSS
-// If the tab is first element isFirstElement={tabsObject.indexOf(tab) == 0}
-// If the tab is last element isLastElement={tabsObject.indexOf(tab) == basicTabsObjects.length - 1}
+// CONTEXT
+import { TabsContext } from "../contexts/TabsContext";
 
 function TodoHeader() {
-  // By default all is active
+  // DEFAULT THE TAB CALLED ALL IS ACTIVE
   const [activeObj, setActiveObj] = useState({
     all: "007BFF",
     basicTarget: "007BFF",
     typedTarget: "",
   });
-  // Bring all tabs object from context (Tabs Context)
+  // BRING & COMPAIN BASIC AND TYPED OBJECT FROM TABS CONTEXT
   const { basicTabsObjects, typedTabsObjects } = useContext(TabsContext);
-  // Prepare the basic tabs as elements
 
-  // Complex condition
-  // 1.tab.color.slice(1) => that returns tab's color but without #
-  // 2.(activeObj.all == activeObj.basicTarget ? activeObj.all : activeObj.basicTarget) => This condition checks if
+  // COMPLEX CONDITION WILL FIND IT BELOW
+  // 3.tab.color.slice(1) => that returns tab's color but without #
+  // 4.(activeObj.all == activeObj.basicTarget ? activeObj.all : activeObj.basicTarget) => This condition checks if
   //    A. all === basicTarget that means tab called all  is the active tab right now.
   //    B. all !== basicTarget that means there is aonther tab is active right now (done, not done)
 
+  // PREPARE BASIC TABS AS ELEMENTS
   const basicTabsElements = basicTabsObjects.map((tab) => {
     return (
       <BasicTab
-        key={tab.color.slice(1)}
+        key={tab.color.slice(1)} // 3.
         tab={tab}
         isActive={
           tab.color.slice(1) ===
           (activeObj.all == activeObj.basicTarget
             ? activeObj.all
-            : activeObj.basicTarget)
+            : activeObj.basicTarget) // 4. (A,B)
         }
         activeObj={activeObj}
         handleOnClick={setActiveObj}
         color={tab.color.slice(1)}
-        isFirstElement={basicTabsObjects.indexOf(tab) == 0}
+        isFirstElement={basicTabsObjects.indexOf(tab) == 0} // 1.
       />
     );
   });
 
-  // Prepare the typed tabs as elements
+  // PREPARE TYPED TABS AS ELEMENTS
   const typeTabsElements = typedTabsObjects.map((tab) => {
     return (
       <TypedTab
@@ -56,16 +58,17 @@ function TodoHeader() {
         color={tab.color.slice(1)}
         isLastElement={
           typedTabsObjects.indexOf(tab) == typedTabsObjects.length - 1
-        }
+        } // 2.
       />
     );
   });
 
+  // COMPAIN BASIC & TYPED TABS IN ONE VARIABLE
   const allTabs = [...basicTabsElements, ...typeTabsElements];
 
   return (
     <div>
-      {/* Render application heading */}
+      {/* RENDER THE APP HEADING */}
       <Typography
         variant="h2"
         color="black"
@@ -73,7 +76,7 @@ function TodoHeader() {
       >
         مهامي
       </Typography>
-      {/* Render all tabs */}
+      {/* RENDER COMPAINED TABS TOGTHER*/}
       <ul className="flex select-none my-5">{allTabs}</ul>
     </div>
   );
@@ -90,16 +93,17 @@ function BasicTab({
   const [hover, setHover] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // FUNCTION TO HANDLE CLICKS ON TABS
   function handleTabOnClick(color, valueType, status) {
     if (valueType === "الكل") {
-      // Set active on tab's called all and remove active from all tabs (basic tabs & typed tabs)
+      // Set active on a tab  called all and remove active from all tabs (basic tabs & typed tabs)
       handleOnClick({ all: color, basicTarget: color, typedTarget: "" });
+      setSearchParams({});
     } else {
       // Set active on current basic tabs and remove active from all other tabs (all & done | not done)
       handleOnClick({ ...activeObj, basicTarget: color });
     }
-
-    if (valueType === "الكل") setSearchParams({});
+    // Set is complated search param based on click tab (done | not done)
     if (valueType === "منجز" || valueType === "غير منجز") {
       setSearchParams({ isComplated: status, type: searchParams.get("type") });
     }
@@ -138,14 +142,14 @@ function TypedTab({
   const [searchParams, setSearchParams] = useSearchParams();
 
   function handleTabOnClick(color, valueType) {
-    // Set active on current tab and remove active from all other tabs
+    // Set active on current tab and remove active from all other tabs (personal, work, hoppies)
     handleOnClick({
       ...activeObj,
       typedTarget: color,
       basicTarget:
         activeObj.all === activeObj.basicTarget ? "" : activeObj.basicTarget,
     });
-
+    // Set type search param based on click type (personal, work, hoppies)
     setSearchParams({
       isComplated: searchParams.get("isComplated"),
       type: valueType,
