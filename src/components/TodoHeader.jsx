@@ -5,10 +5,10 @@
 // MUI
 import Typography from "@mui/material/Typography";
 // REACT
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 // CONTEXT
-import { TabsContext } from "../contexts/TabsContext";
+import { useTabs } from "../contexts/TabsContext";
 
 function TodoHeader() {
   // DEFAULT THE TAB CALLED ALL IS ACTIVE
@@ -18,7 +18,7 @@ function TodoHeader() {
     typedTarget: "",
   });
   // BRING & COMPAIN BASIC AND TYPED OBJECT FROM TABS CONTEXT
-  const { basicTabsObjects, typedTabsObjects } = useContext(TabsContext);
+  const { basicTabsObjects, typedTabsObjects } = useTabs();
 
   // COMPLEX CONDITION WILL FIND IT BELOW
   // 3.tab.color.slice(1) => that returns tab's color but without #

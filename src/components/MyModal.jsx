@@ -11,10 +11,10 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 // REACT
-import { useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 // CONTEXT
-import { TodosContext } from "../contexts/TodosContext";
+import { useTodos } from "../contexts/TodosContext";
+import { useMyAlert } from "../contexts/MyAlertContext";
 
 // Modal Style
 const style = {
@@ -39,7 +39,8 @@ function MyModal({
   toDoDetails,
   setToDoDetails,
 }) {
-  const { todos, setTodos, handleAddingTodo } = useContext(TodosContext);
+  const { todos, setTodos, handleAddingTodo } = useTodos();
+  const { handleMyAlertOnEvent } = useMyAlert();
   const isReady =
     [toDoDetails.title, toDoDetails.description, toDoDetails.type].filter(
       (ele) => ele.length > 1
@@ -74,6 +75,8 @@ function MyModal({
             description: "",
             type: "",
           });
+          // Show my alert
+          handleMyAlertOnEvent("تم إضافة المهمة بنجاح");
         }
       : () => {
           const newTodosObjects = todos.map((obj) =>
@@ -91,6 +94,8 @@ function MyModal({
           localStorage.setItem("todos", JSON.stringify(newTodosObjects));
           setToDoDetails({ title: "", description: "", type: "" });
           setIsOpen(false);
+          // Show my alert
+          handleMyAlertOnEvent("تم تعديل المهمة بنجاح");
         };
 
   return (

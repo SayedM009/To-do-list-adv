@@ -1,4 +1,5 @@
 // MUI
+import { Tooltip, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
@@ -10,14 +11,14 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { Tooltip, Typography } from "@mui/material";
 
 // REACT
-import { useContext, useState } from "react";
+import { useState } from "react";
 // Context
-import { TodosContext } from "../contexts/TodosContext";
-import { TabsContext } from "../contexts/TabsContext";
+import { useTodos } from "../contexts/TodosContext";
+import { useTabs } from "../contexts/TabsContext";
 import MyModal from "./MyModal";
+import { useMyAlert } from "../contexts/MyAlertContext";
 
 // Icons Style
 const iconsStyle = {
@@ -29,16 +30,17 @@ const iconsStyle = {
 
 function Todo({ todo }) {
   const [deleteTodo, setDeleteTodo] = useState(false); // 2
-  const { todos, setTodos } = useContext(TodosContext);
+  const { todos, setTodos } = useTodos();
   const [isOpen, setIsOpen] = useState(false);
   const [toDoDetails, setToDoDetails] = useState({
     title: "",
     description: "",
     type: "",
   });
+  const { handleMyAlertOnEvent } = useMyAlert();
 
   // BRING & COMPAIN BASIC AND TYPED OBJECT FROM TABS CONTEXT TO EXTRACT COLORS
-  const { basicTabsObjects, typedTabsObjects } = useContext(TabsContext);
+  const { basicTabsObjects, typedTabsObjects } = useTabs();
   const [_, green, yellow, ...other] = [
     ...basicTabsObjects,
     ...typedTabsObjects,
@@ -52,6 +54,8 @@ function Todo({ todo }) {
     setTodos(newTodosObjects);
     // Update to dos in local storage
     localStorage.setItem("todos", JSON.stringify(newTodosObjects));
+    // Show my alert
+    handleMyAlertOnEvent(todo.isComplated ? "تم إلغاء الإنجاز" : "تم الإنجاز");
   }
 
   function handleOnClickDelete() {
@@ -59,6 +63,8 @@ function Todo({ todo }) {
     setTodos(newTodosObjects);
     // Update to dos in local storage
     localStorage.setItem("todos", JSON.stringify(newTodosObjects));
+    // Show my alert
+    handleMyAlertOnEvent("تم حذف المهمة بنجاح");
   }
 
   // RENDER THE ADDING TODO DATE AS STRING
@@ -71,6 +77,7 @@ function Todo({ todo }) {
 
   return (
     <>
+      {/* UPDATE TODO MODAL */}
       <MyModal
         type="edit"
         todo={todo}
@@ -80,8 +87,6 @@ function Todo({ todo }) {
         toDoDetails={toDoDetails}
         setToDoDetails={setToDoDetails}
       />
-      {/* UPDATE TODO MODAL */}
-
       {/* UPDATE TODO MODAL */}
       {/* DELET TODO MODAL FOR APPROVAL*/}
       <Dialog

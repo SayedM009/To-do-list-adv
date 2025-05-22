@@ -1,14 +1,14 @@
 // MUI
 import Box from "@mui/material/Box";
 // REACT
-import { useContext } from "react";
-import { TodosContext } from "../contexts/TodosContext";
+import { useMemo } from "react";
+import { useTodos } from "../contexts/TodosContext";
 import { useSearchParams } from "react-router";
 // Components
 import Todo from "./Todo";
 
 function TodoBody() {
-  const { todos } = useContext(TodosContext);
+  const { todos } = useTodos();
   const [searchParams] = useSearchParams();
 
   // FILTER TODOS BASED ON CLICK TABS
@@ -18,19 +18,21 @@ function TodoBody() {
     isCompletedParamRaw === "null" ? null : isCompletedParamRaw;
   const typeParam = typeParamRaw === "null" ? null : typeParamRaw;
 
-  const filteredTasks = todos.filter((todo) => {
-    const matchesCompletion =
-      isCompletedParam === null ||
-      (isCompletedParam === "true" && todo.isComplated) ||
-      (isCompletedParam === "false" && !todo.isComplated);
+  const filteredTasks = useMemo(() => {
+    return todos.filter((todo) => {
+      const matchesCompletion =
+        isCompletedParam === null ||
+        (isCompletedParam === "true" && todo.isComplated) ||
+        (isCompletedParam === "false" && !todo.isComplated);
 
-    const matchesType = typeParam === null || todo.type === typeParam;
+      const matchesType = typeParam === null || todo.type === typeParam;
 
-    return matchesCompletion && matchesType;
-  });
+      return matchesCompletion && matchesType;
+    });
+  }, [isCompletedParam, todos, typeParam]);
 
   // IF THERE ARE NO TODOS
-  if (Object.keys(filteredTasks).length === 0)
+  if (filteredTasks.length === 0)
     return (
       <h2 className=" my-10 text-blue-950 font-medium">
         أضف بعض المهمام لرويتها هنا.
@@ -46,7 +48,7 @@ function TodoBody() {
       component="section"
       sx={{
         maxHeight: "40vh",
-        overflowY: `${todos.lenght > 3 ? "scroll" : "none"}`,
+        overflowY: `${todos.length > 3 ? "scroll" : "none"}`,
         overflowX: "hidden",
         "&::-webkit-scrollbar": {
           width: "8px",
